@@ -118,15 +118,15 @@ func init() {
 // anaconda.tweet를 그대로 쓰기에는 너무 크다
 // 적당히 필요한것만 뺴내기
 type simpleTweet struct {
-	ID      int64         `json:"id"`
-	TweetID int64         `json:"tweet_id"`
+	ID      string        `json:"id"`
+	TweetID string        `json:"tweet_id"`
 	User    simpleUser    `json:"user"`
 	Text    string        `json:"text"`
 	Media   []simpleMedia `json:"media"`
 }
 
 type simpleMedia struct {
-	ID   int64  `json:"id"`
+	ID   string `json:"id"`
 	Type string `json:"type"`
 	URL  string `json:"url"`
 }
@@ -155,7 +155,7 @@ func makeMediaVideo(media anaconda.EntityMedia) simpleMedia {
 	}
 
 	return simpleMedia{
-		ID:   media.Id,
+		ID:   media.Id_str,
 		Type: media.Type,
 		URL:  selectedVariant.Url,
 	}
@@ -170,21 +170,21 @@ func makeMediaPhoto(media anaconda.EntityMedia) simpleMedia {
 	postfix := ":orig"
 	url := media.Media_url_https + postfix
 	return simpleMedia{
-		ID:   media.Id,
+		ID:   media.Id_str,
 		Type: media.Type,
 		URL:  url,
 	}
 }
 
 type simpleUser struct {
-	ID         int64  `json:"id"`
+	ID         string `json:"id"`
 	Name       string `json:"name"`
 	ScreenName string `json:"screen_name"`
 }
 
 func newSimpleUser(u anaconda.User) simpleUser {
 	return simpleUser{
-		ID:         u.Id,
+		ID:         u.IdStr,
 		Name:       u.Name,
 		ScreenName: u.ScreenName,
 	}
@@ -211,8 +211,8 @@ func fetchTweet(uid int64) (simpleTweet, error) {
 	}
 
 	return simpleTweet{
-		ID:      uid,
-		TweetID: t.Id,
+		ID:      strconv.FormatInt(uid, 10),
+		TweetID: t.IdStr,
 		Media:   mediaList,
 		User:    newSimpleUser(t.User),
 		Text:    t.FullText,
