@@ -1,0 +1,42 @@
+service: serina
+
+provider:
+  name: aws
+  runtime: go1.x
+
+  apiKeys:
+    - serina
+  usagePlan:
+    quota:
+      limit: 5000
+      offset: 2
+      period: MONTH
+    throttle:
+      burstLimit: 200
+      rateLimit: 100
+
+  stage: dev
+  region: ap-northeast-2
+
+  environment:
+    TWITTER_CONSUMER_KEY: ${env:TWITTER_CONSUMER_KEY}
+    TWITTER_CONSUMER_SECRET: ${env:TWITTER_CONSUMER_SECRET}
+    TWITTER_ACCESS_TOKEN: ${env:TWITTER_ACCESS_TOKEN}
+    TWITTER_ACCESS_TOKEN_SECRET: ${env:TWITTER_ACCESS_TOKEN_SECRET}
+
+package:
+  exclude:
+    - ./**
+  include:
+    - ./bin/**
+
+functions:
+  serina:
+    handler: bin/serina
+    events:
+      - http:
+          path: api/dump/{uid}
+          method: get
+      - http:
+          path: api/fetch/{uid}
+          method: get
