@@ -3,14 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"strconv"
 
 	"github.com/ChimeraCoder/anaconda"
-	"github.com/akrylysov/algnhsa"
 	"github.com/gorilla/mux"
+
+	"google.golang.org/api/drive/v3"
 )
 
 func responseErr(w http.ResponseWriter, err error, status int) {
@@ -87,32 +87,34 @@ var twitterAccessTokenSecret string
 var api *anaconda.TwitterApi
 
 func init() {
-	twitterConsumerKey = os.Getenv("TWITTER_CONSUMER_KEY")
-	if twitterConsumerKey == "" {
-		log.Fatalln("TWITTER_CONSUMER_KEY not found")
-	}
+	/*
+		twitterConsumerKey = os.Getenv("TWITTER_CONSUMER_KEY")
+		if twitterConsumerKey == "" {
+			log.Fatalln("TWITTER_CONSUMER_KEY not found")
+		}
 
-	twitterConsumerSecret := os.Getenv("TWITTER_CONSUMER_SECRET")
-	if twitterConsumerSecret == "" {
-		log.Fatalln("TWITTER_CONSUMER_SECRET not found")
-	}
+		twitterConsumerSecret := os.Getenv("TWITTER_CONSUMER_SECRET")
+		if twitterConsumerSecret == "" {
+			log.Fatalln("TWITTER_CONSUMER_SECRET not found")
+		}
 
-	twitterAccessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
-	if twitterAccessToken == "" {
-		log.Fatalln("TWITTER_ACCESS_TOKEN not found")
-	}
+		twitterAccessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
+		if twitterAccessToken == "" {
+			log.Fatalln("TWITTER_ACCESS_TOKEN not found")
+		}
 
-	twitterAccessTokenSecret := os.Getenv("TWITTER_ACCESS_TOKEN_SECRET")
-	if twitterAccessTokenSecret == "" {
-		log.Fatalln("TWITTER_ACCESS_TOKEN_SECRET not found")
-	}
+		twitterAccessTokenSecret := os.Getenv("TWITTER_ACCESS_TOKEN_SECRET")
+		if twitterAccessTokenSecret == "" {
+			log.Fatalln("TWITTER_ACCESS_TOKEN_SECRET not found")
+		}
 
-	api = anaconda.NewTwitterApiWithCredentials(
-		twitterAccessToken,
-		twitterAccessTokenSecret,
-		twitterConsumerKey,
-		twitterConsumerSecret,
-	)
+		api = anaconda.NewTwitterApiWithCredentials(
+			twitterAccessToken,
+			twitterAccessTokenSecret,
+			twitterConsumerKey,
+			twitterConsumerSecret,
+		)
+	*/
 }
 
 // anaconda.tweet를 그대로 쓰기에는 너무 크다
@@ -228,6 +230,7 @@ func setUpMux() *mux.Router {
 	return r
 }
 
+/*
 func main() {
 	r := setUpMux()
 
@@ -240,4 +243,34 @@ func main() {
 		http.ListenAndServe(addr, r)
 		fmt.Printf("local server running: %s\n", addr)
 	}
+}
+*/
+
+func main() {
+	gd := newGdrive()
+
+	dirs, err := gd.mkdir("serina/foo/bar")
+	if err != nil {
+		panic(err)
+	}
+	for _, i := range dirs {
+		fmt.Printf("%s (%s)\n", i.Name, i.Id)
+	}
+
+	// open file
+	f, err := os.Open("serverless.yml")
+	if err != nil {
+		panic(err)
+	}
+	defer f.Close()
+
+	// create or overwrite
+	dir := dirs[len(dirs)-1]
+	file, err := gd.upload(f, &drive.File{
+		Name: "serverless.yml",
+	}, dir)
+	if err != nil {
+		panic(err)
+	}
+	fmt.Printf("uploaded: %s (%s)\n", file.Name, file.Id)
 }
