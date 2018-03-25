@@ -1,4 +1,4 @@
-package main
+package serina
 
 import (
 	"encoding/json"
@@ -20,7 +20,7 @@ import (
 	drive "google.golang.org/api/drive/v3"
 )
 
-type gdrive struct {
+type GDrive struct {
 	srv *drive.Service
 }
 
@@ -96,7 +96,7 @@ func saveToken(file string, token *oauth2.Token) {
 	json.NewEncoder(f).Encode(token)
 }
 
-func newGdrive() *gdrive {
+func NewGDrive() *GDrive {
 	ctx := context.Background()
 
 	b, err := ioutil.ReadFile("client_secret.json")
@@ -117,31 +117,33 @@ func newGdrive() *gdrive {
 		log.Fatalf("Unable to retrieve drive Client %v", err)
 	}
 
-	return &gdrive{
+	return &GDrive{
 		srv: srv,
 	}
 }
 
-func (g *gdrive) mkdir(dirs string) ([]*drive.File, error) {
+func (g *GDrive) Mkdir(dirs string) ([]*drive.File, error) {
 	srv := g.srv
 	dirList := strings.Split(dirs, "/")
 
 	founds := []*drive.File{}
 	for _, dir := range dirList {
+		if len(dir) == 0 {
+			continue
+		}
+
 		queries := []string{
 			"mimeType='application/vnd.google-apps.folder'",
 			"trashed=false",
+			fmt.Sprintf("name contains '%s'", dir),
 		}
-		queries = append(queries, fmt.Sprintf("name='%s'", dir))
 		if len(founds) > 0 {
 			last := founds[len(founds)-1]
 			queries = append(queries, fmt.Sprintf("'%s' in parents", last.Id))
 		}
+		queryStr := strings.Join(queries, " and ")
 
-		list := srv.Files.List()
-		for _, q := range queries {
-			list = list.Q(q)
-		}
+		list := srv.Files.List().Q(queryStr)
 		r, err := list.Fields("nextPageToken, files(id, name)").Do()
 		if err != nil {
 			return founds, err
@@ -171,12 +173,15 @@ func (g *gdrive) mkdir(dirs string) ([]*drive.File, error) {
 	return founds, nil
 }
 
-func (g *gdrive) upload(r io.Reader, f *drive.File, parent *drive.File) (*drive.File, error) {
+func (g *GDrive) Upload(r io.Reader, f *drive.File, parent *drive.File) (*drive.File, error) {
 	srv := g.srv
 
+	queries := []string{
+		fmt.Sprintf("name='%s'", f.Name),
+		fmt.Sprintf("'%s' in parents", parent.Id),
+	}
 	res, err := srv.Files.List().
-		Q(fmt.Sprintf("name='%s'", f.Name)).
-		Q(fmt.Sprintf("'%s' in parents", parent.Id)).
+		Q(strings.Join(queries, " and ")).
 		Fields("nextPageToken, files(id, name)").Do()
 	if err != nil {
 		return nil, err

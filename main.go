@@ -1,16 +1,13 @@
-package main
+package serina
 
 import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"os"
 	"strconv"
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/gorilla/mux"
-
-	"google.golang.org/api/drive/v3"
 )
 
 func responseErr(w http.ResponseWriter, err error, status int) {
@@ -246,31 +243,8 @@ func main() {
 }
 */
 
+/*
 func main() {
 	gd := newGdrive()
-
-	dirs, err := gd.mkdir("serina/foo/bar")
-	if err != nil {
-		panic(err)
-	}
-	for _, i := range dirs {
-		fmt.Printf("%s (%s)\n", i.Name, i.Id)
-	}
-
-	// open file
-	f, err := os.Open("serverless.yml")
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
-
-	// create or overwrite
-	dir := dirs[len(dirs)-1]
-	file, err := gd.upload(f, &drive.File{
-		Name: "serverless.yml",
-	}, dir)
-	if err != nil {
-		panic(err)
-	}
-	fmt.Printf("uploaded: %s (%s)\n", file.Name, file.Id)
 }
+*/
