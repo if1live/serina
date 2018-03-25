@@ -20,6 +20,23 @@
   revision = "c5a927568de7aad8a58127d80bcd36ca4e71e454"
 
 [[projects]]
+  name = "github.com/akrylysov/algnhsa"
+  packages = ["."]
+  revision = "1b2519a6df09142a48adb4377b70c1814925c0d2"
+  version = "v0.5"
+
+[[projects]]
+  name = "github.com/aws/aws-lambda-go"
+  packages = [
+    "events",
+    "lambda",
+    "lambda/messages",
+    "lambdacontext"
+  ]
+  revision = "fafa7e49388b8991caf99308e80655ba91816b72"
+  version = "v1.1.0"
+
+[[projects]]
   branch = "master"
   name = "github.com/azr/backoff"
   packages = ["."]
@@ -86,7 +103,6 @@
   branch = "master"
   name = "google.golang.org/api"
   packages = [
-    "drive/v2",
     "drive/v3",
     "gensupport",
     "googleapi",
@@ -114,6 +130,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "18682035b50570e4856cc2eba3f67c27c8a56015332612509dff5139b156c8e4"
+  inputs-digest = "a9766f28f2fdeb6c8766c83dfdf3ad505de81bbf79f194cc9a1cd26475c7f71e"
   solver-name = "gps-cdcl"
   solver-version = 1

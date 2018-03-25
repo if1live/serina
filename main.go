@@ -1,13 +1,21 @@
 package serina
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"log"
 	"net/http"
+	"os"
+	"path"
 	"strconv"
+	"strings"
+	"time"
 
 	"github.com/ChimeraCoder/anaconda"
 	"github.com/gorilla/mux"
+	drive "google.golang.org/api/drive/v3"
 )
 
 func responseErr(w http.ResponseWriter, err error, status int) {
@@ -29,7 +37,6 @@ func getTweetID(r *http.Request) (int64, error) {
 }
 
 func dumpHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("dump")
 	tweetID, err := getTweetID(r)
 	if err != nil {
 		responseErr(w, err, http.StatusInternalServerError)
@@ -48,7 +55,6 @@ func dumpHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func fetchHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("fetch")
 	tweetID, err := getTweetID(r)
 	if err != nil {
 		responseErr(w, err, http.StatusInternalServerError)
@@ -63,6 +69,128 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 
 	//w.Header().Set("Content-Type", "applicaiton/json")
 	data, _ := json.Marshal(tweet)
+	w.Write(data)
+}
+
+func uploadHandler(w http.ResponseWriter, r *http.Request) {
+	tweetID, err := getTweetID(r)
+	if err != nil {
+		responseErr(w, err, http.StatusInternalServerError)
+		return
+	}
+
+	tweet, err := fetchTweet(tweetID)
+	if err != nil {
+		responseErr(w, err, http.StatusInternalServerError)
+		return
+	}
+	log.Printf("fetch tweet: %d", tweetID)
+
+	// url 받는건 동시에 여러개 처리 가능
+	type FetchResult struct {
+		data  []byte
+		media simpleMedia
+		idx   int
+	}
+	fetchCh := make(chan FetchResult)
+	for i, media := range tweet.Media {
+		go func(index int, media simpleMedia) {
+			resp, err := http.Get(media.URL)
+			if err != nil {
+				panic(err)
+			}
+			defer resp.Body.Close()
+			log.Printf("fetch media [%d]: %s", index, media.URL)
+
+			data, _ := ioutil.ReadAll(resp.Body)
+			r := FetchResult{
+				data:  data,
+				media: media,
+				idx:   index,
+			}
+			fetchCh <- r
+		}(i, media)
+	}
+
+	gd := NewGDrive()
+	now := time.Now()
+	date := now.Format("2006-01-02")
+
+	// prepare dir
+	dirname := fmt.Sprintf("serina/%s", date)
+	dirs, err := gd.Mkdir(dirname)
+	if err != nil {
+		responseErr(w, err, http.StatusInternalServerError)
+		return
+	}
+	parent := dirs[len(dirs)-1]
+	log.Printf("dirname : %s [%s]", dirname, parent.Id)
+
+	// 구글 드라이브 업로드는 동시에 처리가능
+	type UploadResult struct {
+		file *drive.File
+		err  error
+	}
+	uploadCh := make(chan UploadResult)
+
+	go func() {
+		// upload tweet json
+		tweetData, _ := json.Marshal(tweet)
+		jsonfile, err := gd.Upload(bytes.NewReader(tweetData), &drive.File{
+			Name: fmt.Sprintf("%d.json", tweetID),
+		}, parent)
+		log.Printf("upload tweet: %s id=%s", jsonfile.Name, jsonfile.Id)
+
+		if err != nil {
+			uploadCh <- UploadResult{err: err}
+		} else {
+			uploadCh <- UploadResult{file: jsonfile}
+		}
+	}()
+
+	// upload media
+	for i := 0; i < len(tweet.Media); i++ {
+		result := <-fetchCh
+		order := result.idx + 1
+
+		go func(order int, media simpleMedia, data []byte) {
+			ext := path.Ext(strings.Replace(media.URL, ":orig", "", -1))
+			filename := fmt.Sprintf("%d_%d%s", tweetID, order, ext)
+			file, err := gd.Upload(bytes.NewReader(data), &drive.File{
+				Name: filename,
+			}, parent)
+			log.Printf("upload media [%d]: %s id=%s", order, file.Name, file.Id)
+
+			if err != nil {
+				uploadCh <- UploadResult{err: err}
+			} else {
+				uploadCh <- UploadResult{file: file}
+			}
+		}(order, result.media, result.data)
+	}
+
+	filenames := []string{}
+	for i := 0; i < len(tweet.Media)+1; i++ {
+		upload := <-uploadCh
+		if upload.err != nil {
+			responseErr(w, err, http.StatusInternalServerError)
+			return
+		}
+		filenames = append(filenames, upload.file.Name)
+	}
+
+	type Response struct {
+		ID        string   `json:"id"`
+		Directory string   `json:"directory"`
+		Files     []string `json:"files'`
+	}
+	resp := Response{
+		ID:        strconv.FormatInt(tweetID, 10),
+		Directory: dirname,
+		Files:     filenames,
+	}
+
+	data, _ := json.Marshal(resp)
 	w.Write(data)
 }
 
@@ -84,44 +212,41 @@ var twitterAccessTokenSecret string
 var api *anaconda.TwitterApi
 
 func init() {
-	/*
-		twitterConsumerKey = os.Getenv("TWITTER_CONSUMER_KEY")
-		if twitterConsumerKey == "" {
-			log.Fatalln("TWITTER_CONSUMER_KEY not found")
-		}
+	twitterConsumerKey = os.Getenv("TWITTER_CONSUMER_KEY")
+	twitterConsumerSecret := os.Getenv("TWITTER_CONSUMER_SECRET")
+	twitterAccessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
+	twitterAccessTokenSecret := os.Getenv("TWITTER_ACCESS_TOKEN_SECRET")
 
-		twitterConsumerSecret := os.Getenv("TWITTER_CONSUMER_SECRET")
-		if twitterConsumerSecret == "" {
-			log.Fatalln("TWITTER_CONSUMER_SECRET not found")
+	twitterEnvs := []string{
+		twitterAccessToken,
+		twitterAccessTokenSecret,
+		twitterConsumerKey,
+		twitterConsumerSecret,
+	}
+	valid := true
+	for _, e := range twitterEnvs {
+		if e == "" {
+			valid = false
+			break
 		}
-
-		twitterAccessToken := os.Getenv("TWITTER_ACCESS_TOKEN")
-		if twitterAccessToken == "" {
-			log.Fatalln("TWITTER_ACCESS_TOKEN not found")
-		}
-
-		twitterAccessTokenSecret := os.Getenv("TWITTER_ACCESS_TOKEN_SECRET")
-		if twitterAccessTokenSecret == "" {
-			log.Fatalln("TWITTER_ACCESS_TOKEN_SECRET not found")
-		}
-
+	}
+	if valid {
 		api = anaconda.NewTwitterApiWithCredentials(
 			twitterAccessToken,
 			twitterAccessTokenSecret,
 			twitterConsumerKey,
 			twitterConsumerSecret,
 		)
-	*/
+	}
 }
 
-// anaconda.tweet를 그대로 쓰기에는 너무 크다
-// 적당히 필요한것만 뺴내기
 type simpleTweet struct {
 	ID      string        `json:"id"`
 	TweetID string        `json:"tweet_id"`
 	User    simpleUser    `json:"user"`
 	Text    string        `json:"text"`
 	Media   []simpleMedia `json:"media"`
+	Dump    anaconda.Tweet
 }
 
 type simpleMedia struct {
@@ -196,7 +321,7 @@ func fetchTweet(uid int64) (simpleTweet, error) {
 	}
 
 	var t anaconda.Tweet
-	if tweet.Retweeted {
+	if tweet.Retweeted && tweet.RetweetedStatus != nil {
 		t = *tweet.RetweetedStatus
 	} else {
 		t = tweet
@@ -215,36 +340,16 @@ func fetchTweet(uid int64) (simpleTweet, error) {
 		Media:   mediaList,
 		User:    newSimpleUser(t.User),
 		Text:    t.FullText,
+		Dump:    tweet,
 	}, nil
 }
 
-func setUpMux() *mux.Router {
+func SetUpMux() *mux.Router {
 	r := mux.NewRouter()
 	r.HandleFunc("/api/fetch/{uid}", fetchHandler)
 	r.HandleFunc("/api/dump/{uid}", dumpHandler)
+	r.HandleFunc("/api/upload/{uid}", uploadHandler)
 	r.NotFoundHandler = http.HandlerFunc(notFound)
 
 	return r
 }
-
-/*
-func main() {
-	r := setUpMux()
-
-	if os.Getenv("LAMBDA_TASK_ROOT") != "" {
-		algnhsa.ListenAndServe(r, nil)
-
-	} else {
-		addr := ":8080"
-		r := setUpMux()
-		http.ListenAndServe(addr, r)
-		fmt.Printf("local server running: %s\n", addr)
-	}
-}
-*/
-
-/*
-func main() {
-	gd := newGdrive()
-}
-*/
