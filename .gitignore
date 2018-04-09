@@ -23,3 +23,7 @@ bin/*
 
 ## symlink
 /serina/
+
+## private
+.env
+client_secret.json
