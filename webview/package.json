@@ -8,9 +8,10 @@
     "react-dom": "^16.3.1",
     "react-scripts-ts": "2.14.0"
   },
+  "homepage": "https://libsora.so/serina/",
   "scripts": {
     "start": "react-scripts-ts start",
-    "build": "react-scripts-ts build",
+    "build": "react-scripts-ts build && rm -rf ../docs/* && mv build/* ../docs",
     "test": "react-scripts-ts test --env=jsdom",
     "eject": "react-scripts-ts eject"
   },

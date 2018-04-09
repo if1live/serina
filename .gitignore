@@ -20,3 +20,6 @@ bin/*
 
 ## environment
 .env
+
+## symlink
+/serina/
