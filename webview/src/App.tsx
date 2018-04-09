@@ -44,7 +44,7 @@ class App extends React.Component<{}, any> {
   }
 
   async fetchTweet(uid: string) {
-    const uri = `/fetch/${uid}.json`;
+    const uri = `./fetch/${uid}.json`;
     try {
       const resp = await fetch(uri);
       const tweet = await resp.json() as M.Tweet;
