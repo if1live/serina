@@ -1,6 +1,8 @@
 import * as React from 'react';
+import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 import * as M from './models';
+import { Button } from 'semantic-ui-react';
 
 const MediaView = ({ media }: { media: M.Media }) => {
   return (
@@ -27,7 +29,7 @@ const SearchForm = () => {
   return (
     <form>
       <input type="text" name="query" value="898755978153181185" />
-      <button type="submit">fetch</button>
+      <Button>fetch</Button>
     </form>
   );
 };

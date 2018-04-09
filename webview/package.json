@@ -6,7 +6,9 @@
     "@types/webpack-env": "^1.13.5",
     "react": "^16.3.1",
     "react-dom": "^16.3.1",
-    "react-scripts-ts": "2.14.0"
+    "react-scripts-ts": "2.14.0",
+    "semantic-ui-css": "^2.3.1",
+    "semantic-ui-react": "^0.79.1"
   },
   "homepage": "https://libsora.so/serina/",
   "scripts": {
