@@ -1,22 +1,25 @@
 import * as React from 'react';
 import { Button, Form, FormProps } from 'semantic-ui-react';
+import { Link } from 'react-router-dom';
 import * as Constants from '../constants';
 
 interface SearchFormProps {
   tid: string;
   onChange: (text: string) => void;
-  onSubmit: () => void;
 
 }
 
-export const SearchForm = ({ tid, onChange, onSubmit }: SearchFormProps) => {
+export const SearchForm = ({ tid, onChange }: SearchFormProps) => {
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     onChange(evt.target.value);
 
   };
   const handleSubmit = (evt: React.FormEvent<HTMLFormElement>, data: FormProps) => {
-    onSubmit();
+    evt.preventDefault();
   };
+
+  // TODO
+  const tweetURL = `/tweet/${tid}`;
 
   return (
     <Form onSubmit={handleSubmit}>
@@ -31,7 +34,7 @@ export const SearchForm = ({ tid, onChange, onSubmit }: SearchFormProps) => {
         />
       </Form.Field>
       <Form.Field>
-        <Button type="submit">fetch</Button>
+        <Button as={Link} to={tweetURL}>fetch</Button>
       </Form.Field>
     </Form>
   );

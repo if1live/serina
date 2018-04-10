@@ -9,7 +9,7 @@ export interface TwitterState {
   error: Error | null;
 }
 
-const defaultTwitterState: TwitterState = {
+const initialTwitterState: TwitterState = {
   tid: '',
   tweet: null,
   onRequest: false,
@@ -17,7 +17,7 @@ const defaultTwitterState: TwitterState = {
 };
 
 export function twitter(
-  state: TwitterState = defaultTwitterState,
+  state: TwitterState = initialTwitterState,
   action: TwitterAction
 ): TwitterState {
   switch (action.type) {

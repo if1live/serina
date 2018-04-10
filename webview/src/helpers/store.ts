@@ -7,6 +7,7 @@ import { composeWithDevTools } from 'redux-devtools-extension';
 import { createLogger } from 'redux-logger';
 import { history } from './history';
 import { reducers, State } from '../reducers';
+import { startListener } from './listener';
 
 const makeLogger = () => {
   return createLogger({
@@ -32,3 +33,5 @@ function composeMiddlewares() {
 }
 
 export const store = createStore<State>(reducers, composeMiddlewares());
+
+startListener(history, store);

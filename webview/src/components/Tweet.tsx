@@ -4,6 +4,7 @@ import { SearchForm } from './SearchForm';
 import { CommandView } from './CommandView';
 import { UserView } from './UserView';
 import { RouteComponentProps } from 'react-router';
+import { history } from '../helpers/history';
 
 const MediaView = ({ media }: { media: M.Media }) => {
   return (
@@ -30,14 +31,6 @@ export class Tweet extends React.Component<Props> {
     this.props.tweetFetch(tid);
   }
 
-  handleSearch = () => {
-    /*
-    const { tid } = this.state;
-    this.props.history.push(`/serina/tweet/${tid}/`);
-    this.fetchTweet(this.state.tid);
-    */
-  }
-
   render() {
     const view = (this.props.onRequest)
       ? this.renderRunning()
@@ -48,7 +41,6 @@ export class Tweet extends React.Component<Props> {
         <SearchForm
           tid={this.props.tid}
           onChange={this.props.twitterChangeID}
-          onSubmit={this.handleSearch}
         />
         {view}
       </div>
