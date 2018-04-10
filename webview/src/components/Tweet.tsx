@@ -5,6 +5,7 @@ import { CommandView } from './CommandView';
 import { UserView } from './UserView';
 import { RouteComponentProps } from 'react-router';
 import { history } from '../helpers/history';
+import { default as TweetEmbed } from 'react-tweet-embed';
 
 const MediaView = ({ media }: { media: M.Media }) => {
   return (
@@ -28,7 +29,7 @@ interface Props extends RouteComponentProps<{ tid: string }> {
 export class Tweet extends React.Component<Props> {
   componentDidMount() {
     const tid = this.props.match.params.tid;
-    this.props.tweetFetch(tid);
+    //this.props.tweetFetch(tid);
   }
 
   render() {
@@ -36,13 +37,16 @@ export class Tweet extends React.Component<Props> {
       ? this.renderRunning()
       : (this.props.tweet ? this.renderSuccess() : this.renderFailure());
 
+    const tid = this.props.match.params.tid;
+
     return (
       <div>
         <SearchForm
           tid={this.props.tid}
           onChange={this.props.twitterChangeID}
         />
-        {view}
+        <TweetEmbed id={tid} />
+        {/*view*/}
       </div>
     );
   }

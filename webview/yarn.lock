@@ -5883,6 +5883,10 @@ react-scripts-ts@2.14.0:
   optionalDependencies:
     fsevents "1.1.2"
 
+react-tweet-embed@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/react-tweet-embed/-/react-tweet-embed-1.1.0.tgz#eb83ad8d75bb29d81b2e5c2d9d586021ceeda948"
+
 react@^16.3.1:
   version "16.3.1"
   resolved "https://registry.yarnpkg.com/react/-/react-16.3.1.tgz#4a2da433d471251c69b6033ada30e2ed1202cfd8"
