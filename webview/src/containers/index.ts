@@ -1,2 +1,2 @@
-export * from './Home';
-export * from './Tweet';
+export * from './HomeContainer';
+export * from './TweetContainer';

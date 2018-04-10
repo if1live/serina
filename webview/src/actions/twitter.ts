@@ -1,6 +1,7 @@
 import { Action, Dispatch } from 'redux';
 import * as M from '../models';
 import * as Raven from 'raven-js';
+import * as Apis from '../helpers/apis';
 
 
 export enum TwitterKeys {
@@ -72,12 +73,12 @@ export const tweetFetch = (tid: string) => {
 
     try {
       // TODO
-      const url = '/todo';
-      const resp = await fetch(url);
+      const uri = Apis.makeFetchURI(tid);
+      const resp = await fetch(uri);
       if (!resp.ok) {
         throw new Error(resp.statusText);
       }
-      const json = await resp.json();
+      const json = await resp.json() as M.Tweet;
       dispatch(tweetFetchSuccess(json));
 
     } catch (err) {
