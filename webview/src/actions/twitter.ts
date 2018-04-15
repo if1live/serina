@@ -74,7 +74,12 @@ export const tweetFetch = (tid: string) => {
     try {
       // TODO
       const uri = Apis.makeFetchURI(tid);
-      const resp = await fetch(uri);
+
+      const opts: RequestInit = {
+        mode: 'cors',
+      };
+
+      const resp = await fetch(uri, opts);
       if (!resp.ok) {
         throw new Error(resp.statusText);
       }

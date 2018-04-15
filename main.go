@@ -18,6 +18,11 @@ import (
 	drive "google.golang.org/api/drive/v3"
 )
 
+// https://flaviocopes.com/golang-enable-cors/
+func enableCors(w *http.ResponseWriter) {
+	(*w).Header().Set("Access-Control-Allow-Origin", "*")
+}
+
 func responseErr(w http.ResponseWriter, err error, status int) {
 	type ErrorResponse struct {
 		Message string `json:"message"`
@@ -37,6 +42,8 @@ func getTweetID(r *http.Request) (int64, error) {
 }
 
 func dumpHandler(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+
 	tweetID, err := getTweetID(r)
 	if err != nil {
 		responseErr(w, err, http.StatusInternalServerError)
@@ -55,6 +62,8 @@ func dumpHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func fetchHandler(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+
 	tweetID, err := getTweetID(r)
 	if err != nil {
 		responseErr(w, err, http.StatusInternalServerError)
@@ -73,6 +82,8 @@ func fetchHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
+	enableCors(&w)
+
 	tweetID, err := getTweetID(r)
 	if err != nil {
 		responseErr(w, err, http.StatusInternalServerError)
