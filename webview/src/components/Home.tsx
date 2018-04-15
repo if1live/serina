@@ -1,21 +1,11 @@
 import * as React from 'react';
 import { SearchForm } from './SearchForm';
+import { Container } from 'semantic-ui-react';
 
-interface Props {
-  twitterChangeID: any;
-
-  tid: string;
-}
-
-export class Home extends React.Component<Props> {
+export class Home extends React.Component<{}> {
   render() {
     return (
-      <div>
-        <SearchForm
-          tid={this.props.tid}
-          onChange={this.props.twitterChangeID}
-        />
-      </div>
+      <div />
     );
   }
 }

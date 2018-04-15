@@ -241,12 +241,12 @@ func init() {
 }
 
 type simpleTweet struct {
-	ID      string        `json:"id"`
-	TweetID string        `json:"tweet_id"`
-	User    simpleUser    `json:"user"`
-	Text    string        `json:"text"`
-	Media   []simpleMedia `json:"media"`
-	Dump    anaconda.Tweet
+	ID      string         `json:"id"`
+	TweetID string         `json:"tweet_id"`
+	User    simpleUser     `json:"user"`
+	Text    string         `json:"text"`
+	Media   []simpleMedia  `json:"media"`
+	Dump    anaconda.Tweet `json:"dump"`
 }
 
 type simpleMedia struct {

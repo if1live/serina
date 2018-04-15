@@ -3,6 +3,7 @@ import { Store } from 'redux';
 import { History } from 'history';
 import {
   twitterChangeID,
+  tweetFetch,
 } from '../actions';
 
 export const LOCATION_CHANGE = 'ROUTER/LOCATION_CHANGE';
@@ -22,8 +23,8 @@ export function startListener(history: History, store: Store<State>) {
   history.listen((location) => {
     // "/tweet/123456",
     var relist = [
-      /^\/tweet\/(\d+)$/,
-      /^\/tweet\/(\d+)\/$/,
+      /^\/tweet\/(.+)$/,
+      /^\/tweet\/(.+)\/$/,
     ];
     const p = location.pathname;
     const matchs = relist.map((re) => p.match(re)).filter(x => !!x);
@@ -31,6 +32,7 @@ export function startListener(history: History, store: Store<State>) {
       const m = matchs[0] as RegExpMatchArray;
       const tid = m[1] as string;
       store.dispatch(twitterChangeID(tid));
+      tweetFetch(tid)(store.dispatch);
     }
   });
 }

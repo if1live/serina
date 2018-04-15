@@ -1,24 +1,14 @@
 import * as React from 'react';
 import * as M from '../models';
 import { SearchForm } from './SearchForm';
-import { CommandView } from './CommandView';
-import { UserView } from './UserView';
+import { DownloadView } from './DownloadView';
 import { RouteComponentProps } from 'react-router';
-import { history } from '../helpers/history';
+import { Container } from 'semantic-ui-react';
 import { default as TweetEmbed } from 'react-tweet-embed';
-
-const MediaView = ({ media }: { media: M.Media }) => {
-  return (
-    <div>
-      {media.type}
-      <img src={media.url} />
-    </div>
-  );
-};
+import { tweetFetch } from '../actions';
 
 interface Props extends RouteComponentProps<{ tid: string }> {
   tweetFetch: any;
-  twitterChangeID: any;
 
   tid: string;
   tweet: M.Tweet;
@@ -29,7 +19,7 @@ interface Props extends RouteComponentProps<{ tid: string }> {
 export class Tweet extends React.Component<Props> {
   componentDidMount() {
     const tid = this.props.match.params.tid;
-    //this.props.tweetFetch(tid);
+    this.props.tweetFetch(tid);
   }
 
   render() {
@@ -41,12 +31,10 @@ export class Tweet extends React.Component<Props> {
 
     return (
       <div>
-        <SearchForm
-          tid={this.props.tid}
-          onChange={this.props.twitterChangeID}
-        />
+        {view}
+
+        <h3>preview</h3>
         <TweetEmbed id={tid} />
-        {/*view*/}
       </div>
     );
   }
@@ -56,23 +44,21 @@ export class Tweet extends React.Component<Props> {
 
     return (
       <div>
-        <CommandView uid={tweet.tweet_id} />
+        <h3>download</h3>
+        <DownloadView tweet={tweet} />
 
-        <a
-          href={`//twitter.com/foo/status/${tweet.tweet_id}`}
-          target="_blank"
-        >
-          goto tweet
-        </a>
-        <p>
-          {tweet.text}
-        </p>
-        <UserView user={tweet.user} />
-        {
-          tweet.media.map((media) => {
-            return (<MediaView key={media.id} media={media} />);
-          })
-        }
+        <h3>media list</h3>
+        <ol>
+          {
+            tweet.media.map((media) => {
+              return (
+                <li key={media.id}>
+                  <a href={media.url} target="_blank">{media.url}</a>
+                </li>
+              );
+            })
+          }
+        </ol>
       </div >
     );
   }

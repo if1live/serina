@@ -1,11 +1,12 @@
 import * as C from '../components';
 import { connect } from 'react-redux';
 import { State } from '../reducers';
+import { withRouter } from 'react-router';
 import {
   tweetFetch,
   twitterChangeID,
 } from '../actions';
-import { withRouter } from 'react-router';
+
 
 const mapStateToProps = (state: State) => ({
   tid: state.twitter.tid,
@@ -16,5 +17,4 @@ const mapStateToProps = (state: State) => ({
 
 export const TweetContainer = withRouter(connect(mapStateToProps, {
   tweetFetch,
-  twitterChangeID,
 })(C.Tweet));
