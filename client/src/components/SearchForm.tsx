@@ -6,8 +6,8 @@ import { History } from 'history';
 import { prefix } from '../App';
 
 interface Props {
-  initialId: string;
-  history: History,
+  initialId: string | null;
+  history: History;
 }
 
 const SampleTweetID = '898755978153181185';
@@ -18,10 +18,10 @@ export const SearchForm = (props: Props) => {
     history,
   } = props;
 
-  const [input, setInput] = useState<string>(initialId);
+  const [input, setInput] = useState<string>(initialId || '');
 
   const id = sanitize(input);
-  const tweetURL = `${prefix}/tweet/${id}`;
+  const tweetURL = `${prefix}?id=${id}`;
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setInput(evt.target.value);

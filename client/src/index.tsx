@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { BrowserRouter } from 'react-router-dom';
+import { BrowserRouter, Route } from 'react-router-dom';
 import './index.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
@@ -21,7 +21,7 @@ firebase.initializeApp(firebaseConfig);
 const AppRouter: React.FC = () => {
   return (
     <BrowserRouter>
-      <App />
+      <Route component={App} />
     </BrowserRouter>
   );
 }
