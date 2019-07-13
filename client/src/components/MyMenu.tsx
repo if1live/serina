@@ -27,6 +27,7 @@ export const MyMenu: React.FC = () => {
       localStorage.setItem(TWITTER_SECRET_KEY, credential.secret!);
 
     } catch (err) {
+      console.error(err);
       setError(err);
     }
   };
