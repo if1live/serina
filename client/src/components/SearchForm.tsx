@@ -3,6 +3,7 @@ import { Button, Form, FormProps } from 'semantic-ui-react';
 import { Link } from 'react-router-dom';
 import { sanitize } from '../helpers';
 import { History } from 'history';
+import { prefix } from '../App';
 
 interface Props {
   initialId: string;
@@ -20,7 +21,7 @@ export const SearchForm = (props: Props) => {
   const [input, setInput] = useState<string>(initialId);
 
   const id = sanitize(input);
-  const tweetURL = `/tweet/${id}`;
+  const tweetURL = `${prefix}/tweet/${id}`;
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setInput(evt.target.value);

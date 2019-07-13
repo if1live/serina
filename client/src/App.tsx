@@ -10,10 +10,9 @@ import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 import { Route } from 'react-router';
 
+export const prefix = '/serina';
+
 const App: React.FC = () => {
-
-  const prefix = '/serina';
-
   return (
     <Container text>
       <MyMenu />
