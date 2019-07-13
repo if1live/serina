@@ -94,7 +94,7 @@ const TweetSuccess: React.FC<{ tweet: ResponseData }> = (props: { tweet: Respons
           mediaList.map((media: any) => {
             return (
               <li key={media.id}>
-                <a href={media.url} target="_blank" rel="noopener noreferrer">{media.url}</a>
+                <a href={media.url} target="_blank" rel="noopener noreferrer">{media.type} {media.id}</a>
               </li>
             );
           })
