@@ -21,20 +21,26 @@ export const SearchForm = (props: Props) => {
   const [input, setInput] = useState<string>(initialId || '');
 
   const id = sanitize(input);
-  const tweetURL = `${prefix}?id=${id}`;
+  const tweetURL = id ? `${prefix}?id=${id}` : prefix;
+  const available = !!id;
 
   const handleChange = (evt: React.ChangeEvent<HTMLInputElement>) => {
     setInput(evt.target.value);
-
   };
+
+  const handleClear = () => {
+    setInput('');
+  };
+
   const handleSubmit = (evt: React.FormEvent<HTMLFormElement>, data: FormProps) => {
+    if (!available) { return; }
     evt.preventDefault();
     history.push(tweetURL);
   };
 
   return (
     <Form onSubmit={handleSubmit}>
-      <Form.Field error={id === undefined}>
+      <Form.Field error={!available}>
         <label>tweet id</label>
         <input
           type="text"
@@ -42,10 +48,19 @@ export const SearchForm = (props: Props) => {
           placeholder={SampleTweetID}
           value={input}
           onChange={handleChange}
+          autoComplete="off"
         />
       </Form.Field>
       <Form.Field>
-        <Button as={Link} to={tweetURL}>fetch</Button>
+        <Button
+          as={Link}
+          to={tweetURL}
+          positive={available}
+          negative={!available}
+        >
+          fetch
+        </Button>
+        <Button onClick={handleClear}>clear</Button>
       </Form.Field>
     </Form>
   );
