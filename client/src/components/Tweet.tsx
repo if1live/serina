@@ -3,12 +3,17 @@ import _ from 'lodash';
 import { ResponseData } from 'twitter';
 import { default as TweetEmbed } from 'react-tweet-embed';
 import { Download } from './Download';
-import { makeFetchURI, extractMediaList } from '../helpers';
+import {
+  makeFetchURI,
+  extractMediaList,
+} from '../helpers';
+import {
+  TWITTER_SECRET_KEY,
+  TWITTER_ACCESS_TOKEN_KEY,
+} from '../constants';
 
 interface Props {
   id: string;
-  accessToken: string;
-  accessTokenSecret: string;
 }
 
 export const Tweet: React.FC<Props> = (props: Props) => {
@@ -16,17 +21,24 @@ export const Tweet: React.FC<Props> = (props: Props) => {
     id,
   } = props;
 
+  const accessToken = localStorage.getItem(TWITTER_ACCESS_TOKEN_KEY);
+  const secretToken = localStorage.getItem(TWITTER_SECRET_KEY);
+
   const [tweet, setTweet] = useState<ResponseData | Error | null>(null);
   const [onRequest, setOnRequest] = useState(false);
 
-  React.useEffect(() => {
-    request();
-  }, [id]);
+  async function request(id: string) {
+    if (!accessToken) { return; }
+    if (!secretToken) { return; }
 
-  async function request() {
     setOnRequest(true);
     try {
-      const uri = makeFetchURI(props);
+      const uri = makeFetchURI({
+        id,
+        accessToken,
+        accessTokenSecret: secretToken,
+      });
+
       const resp = await fetch(uri);
       if (resp.status >= 400) {
         const err = await resp.json();
@@ -41,6 +53,14 @@ export const Tweet: React.FC<Props> = (props: Props) => {
     }
     setOnRequest(false);
   }
+
+  React.useEffect(() => {
+    request(id);
+    // eslint-disable-next-line
+  }, [id]);
+
+  if (!accessToken) { return <div>access token not found</div>; }
+  if (!secretToken) { return <div>secret token not found</div>; }
 
   const view = renderTweet(tweet, onRequest);
   return (
@@ -74,7 +94,7 @@ const TweetSuccess: React.FC<{ tweet: ResponseData }> = (props: { tweet: Respons
           mediaList.map((media: any) => {
             return (
               <li key={media.id}>
-                <a href={media.url} target="_blank">{media.url}</a>
+                <a href={media.url} target="_blank" rel="noopener noreferrer">{media.url}</a>
               </li>
             );
           })

@@ -46,26 +46,20 @@ const DownloadZip = (props: { tweet: ResponseData }) => {
     const mediaList = extractMediaList(tweet);
     const urls = mediaList.map(x => x.url);
     const respList = await Promise.all(urls.map(url => fetch(url)));
-    respList.map((resp, idx) => {
+    for (let idx = 0; idx < respList.length; idx++) {
       const url = urls[idx];
+      const resp = respList[idx];
       const mediaBlob = resp.blob();
       const ext = getMediaExtension(url);
       const mediaFileName = `${tweetID}_${idx + 1}.${ext}`;
       zip.file(mediaFileName, mediaBlob, { binary: true });
-    });
+    }
 
     let blob = await zip.generateAsync({ type: 'blob' });
     FileSaver.saveAs(blob, `${tweetID}.zip`);
   };
   return <Button onClick={handleClick}>zip (tweet json + media)</Button>;
 };
-
-const UploadGoogleDrive = () => {
-  const handleClick = () => {
-  };
-  return <Button onClick={handleClick}>google drive</Button>;
-};
-
 
 interface Props {
   tweet: ResponseData;

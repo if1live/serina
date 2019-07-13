@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Container } from 'semantic-ui-react';
 import {
   MyMenu,
@@ -8,7 +8,7 @@ import {
 
 import 'semantic-ui-css/semantic.min.css';
 import './App.css';
-import { Route, RouteComponentProps } from 'react-router';
+import { Route } from 'react-router';
 
 const App: React.FC = () => {
 

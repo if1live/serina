@@ -56,7 +56,7 @@ export const MyMenu: React.FC = () => {
           return (
             <>
               <Menu.Item>
-                <img src={user.photoURL!} />
+                <img src={user.photoURL!} alt={user.displayName!}/>
                 <span>{user.displayName}</span>
               </Menu.Item>
               <Menu.Item onClick={handleSingOut}>
