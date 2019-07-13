@@ -1,0 +1,15 @@
+{
+  "name": "server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "handler.js",
+  "scripts": {
+    "deploy": "serverless deploy"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "twitter": "^1.7.1",
+    "yup": "^0.27.0"
+  }
+}

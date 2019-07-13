@@ -1,0 +1,39 @@
+# Welcome to serverless. Read the docs
+# https://serverless.com/framework/docs/
+
+# Serverless.yml is the configuration the CLI
+# uses to deploy your code to your provider of choice
+
+# The `service` block is the name of the service
+service: serina
+
+# The `provider` block defines where your service will be deployed
+provider:
+  name: aws
+  runtime: nodejs10.x
+
+  usagePlan:
+    quota:
+      limit: 5000
+      offset: 2
+      period: MONTH
+    throttle:
+      burstLimit: 200
+      rateLimit: 100
+
+  region: ap-northeast-2
+
+  environment:
+    CONSUMER_KEY: ${env:CONSUMER_KEY}
+    CONSUMER_SECRET: ${env:CONSUMER_SECRET}
+
+# The `functions` block defines what code to deploy
+functions:
+  show:
+    handler: handler.show
+    # The `events` block defines how to trigger the handler.helloWorld code
+    events:
+      - http:
+          path: show
+          method: get
+          cors: true
