@@ -63,10 +63,10 @@ export const Tweet: React.FC<Props> = (props: Props) => {
   if (!secretToken) { return <div>secret token not found</div>; }
 
   const view = renderTweet(tweet, onRequest);
+
   return (
     <div>
       {view}
-      <h3>preview</h3>
       <TweetEmbed id={id} />
     </div>
   );
@@ -100,7 +100,17 @@ const TweetSuccess: React.FC<{ tweet: ResponseData }> = (props: { tweet: Respons
           })
         }
       </ol>
-    </div >
+
+      <h3>additional info</h3>
+      <ul>
+        {tweet.user.protected ? <li>protected user, cannot use tweet embed</li> : ''}
+      </ul>
+
+      <details>
+        <summary>json</summary>
+        <pre>{JSON.stringify(tweet, null, 2)}</pre>
+      </details>
+    </div>
   );
 }
 
