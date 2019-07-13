@@ -1,6 +1,6 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "1fa6444e6a43da91fffcb1e9418b7532",
+    "revision": "e122f3f55250c732e554cb3c8a57a55c",
     "url": "/serina/index.html"
   },
   {
@@ -8,7 +8,7 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/serina/static/css/2.98e27d5d.chunk.css"
   },
   {
-    "revision": "3c32fcc2d516e74c2d53",
+    "revision": "6f06f2730ae41d52622a",
     "url": "/serina/static/css/main.27fd15f6.chunk.css"
   },
   {
@@ -16,8 +16,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/serina/static/js/2.1e19f948.chunk.js"
   },
   {
-    "revision": "3c32fcc2d516e74c2d53",
-    "url": "/serina/static/js/main.cec2c644.chunk.js"
+    "revision": "6f06f2730ae41d52622a",
+    "url": "/serina/static/js/main.7ce53681.chunk.js"
   },
   {
     "revision": "7cc0c0948b39267d4f27",
