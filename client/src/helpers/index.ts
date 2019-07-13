@@ -25,11 +25,17 @@ export const makeFetchURI = (opts: {
 };
 
 export function extractMediaList(tweet: ResponseData) {
-  const toMedia = (media: any) => ({
-    id: media.id_str,
-    url: media.media_url_https,
-  });
-  const rawMedia: any[] = tweet.entities.media;
+  const toMedia = (media: any) => {
+    const url = media.type === 'video'
+      ? media.video_info.variants[0].url
+      : media.media_url_https;
+    return {
+      id: media.id_str,
+      type: media.type,
+      url,
+    };
+  };
+  const rawMedia: any[] = tweet.extended_entities.media;
   const mediaList = rawMedia.map(toMedia);
   return mediaList;
 }
