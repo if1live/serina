@@ -10,7 +10,7 @@ import 'semantic-ui-css/semantic.min.css';
 import './App.css';
 import { RouteComponentProps } from 'react-router';
 
-export const prefix = '/serina';
+export const prefix = '/serina/';
 
 interface Props extends RouteComponentProps<{}> {
 }
