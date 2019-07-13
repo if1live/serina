@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { Menu, Icon } from 'semantic-ui-react';
-import firebase from 'firebase';
+
+import firebase from 'firebase/app';
+import 'firebase/auth';
+
 import {
   TWITTER_ACCESS_TOKEN_KEY,
   TWITTER_SECRET_KEY,

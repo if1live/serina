@@ -35,6 +35,9 @@ export function extractMediaList(tweet: ResponseData) {
       url,
     };
   };
+
+  // 미디어 안붙어있는 경우 예외처리
+  if (tweet.extended_entities === undefined) { return []; }
   const rawMedia: any[] = tweet.extended_entities.media;
   const mediaList = rawMedia.map(toMedia);
   return mediaList;
