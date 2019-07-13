@@ -68,3 +68,15 @@ export function sanitize(input: string) {
 
   return undefined;
 }
+
+export const getMediaExtension = (uri: string): string => {
+  // sample
+  // https://pbs.twimg.com/media/DHkFxooUAAAzAry.jpg:orig
+  // https://video.twimg.com/ext_tw_video/12345/pu/vid/1280x720/sample.mp4?tag=10
+  let s = uri.split('.').pop() || '';
+  s = s.split('?')[0];
+  if (s) {
+    s = s.replace(':orig', '');
+  }
+  return s || '';
+};

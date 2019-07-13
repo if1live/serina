@@ -3,17 +3,10 @@ import { Button } from 'semantic-ui-react';
 import JSZip from 'jszip';
 import * as FileSaver from 'file-saver';
 import { ResponseData } from 'twitter';
-import { extractMediaList } from '../helpers';
-
-const getMediaExtension = (uri: string): string => {
-  // sample
-  // https://pbs.twimg.com/media/DHkFxooUAAAzAry.jpg:orig
-  let s = uri.split('.').pop();
-  if (s) {
-    s = s.replace(':orig', '');
-  }
-  return s || '';
-};
+import {
+  extractMediaList,
+  getMediaExtension,
+} from '../helpers';
 
 const makeTweetJsonFileName = (id: string): string => {
   return `${id}.json`;

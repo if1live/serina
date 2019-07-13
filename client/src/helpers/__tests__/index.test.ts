@@ -1,4 +1,8 @@
-import { sanitize } from '../index';
+import {
+  sanitize,
+  getMediaExtension,
+} from '../index';
+
 describe('sanitize', () => {
   it('id', () => {
     expect(sanitize('1150010123705708544')).toBe('1150010123705708544');
@@ -30,8 +34,33 @@ describe('sanitize', () => {
       'https://twitter.com/digimon215/xxx/12345',
       'https://google.com/foo/status/12345',
     ];
-    for(const c of cases) {
+    for (const c of cases) {
       expect(sanitize(c)).toBeUndefined();
     }
   });
+});
+
+describe('getMediaExtension', () => {
+  it('image', () => {
+    const cases = [
+      ['https://pbs.twimg.com/media/DHkFxooUAAAzAry.jpg:orig',
+        'jpg',
+      ],
+    ];
+    for (const c of cases) {
+      expect(getMediaExtension(c[0])).toBe(c[1]);
+    }
+  });
+
+  it('video', () => {
+    const cases = [
+      [
+        'https://video.twimg.com/ext_tw_video/12345/pu/vid/1280x720/sample.mp4?tag=10',
+        'mp4',
+      ],
+    ];
+    for (const c of cases) {
+      expect(getMediaExtension(c[0])).toBe(c[1]);
+    }
+  })
 });
