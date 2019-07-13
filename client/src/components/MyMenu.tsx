@@ -37,9 +37,6 @@ export const MyMenu: React.FC = () => {
     await firebase.auth().signOut();
   }
 
-  console.log(user);
-
-
   return (
     <Menu>
       <Menu.Item>

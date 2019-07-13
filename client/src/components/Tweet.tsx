@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import _ from 'lodash';
-import { Download } from './Download';
-import { default as TweetEmbed } from 'react-tweet-embed';
 import { ResponseData } from 'twitter';
+import { default as TweetEmbed } from 'react-tweet-embed';
+import { Download } from './Download';
 import { makeFetchURI, extractMediaList } from '../helpers';
 
 interface Props {
@@ -28,6 +28,11 @@ export const Tweet: React.FC<Props> = (props: Props) => {
     try {
       const uri = makeFetchURI(props);
       const resp = await fetch(uri);
+      if (resp.status >= 400) {
+        const err = await resp.json();
+        throw new Error(err.message);
+      }
+
       const data = await resp.json();
       setTweet(data);
 

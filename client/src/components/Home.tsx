@@ -1,5 +1,17 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { RouteComponentProps } from 'react-router';
+import { SearchForm } from '.';
 
-export const Home: React.FC = () => {
-  return <div />;
+interface Props extends RouteComponentProps<{}> {
+}
+
+export const Home: React.FC<Props> = (props: Props) => {
+  return (
+    <>
+      <SearchForm
+        initialId={''}
+        history={props.history}
+      />
+    </>
+  );
 }

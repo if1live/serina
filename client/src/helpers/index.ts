@@ -33,3 +33,32 @@ export function extractMediaList(tweet: ResponseData) {
   const mediaList = rawMedia.map(toMedia);
   return mediaList;
 }
+
+const simpleRe = /^\d+$/;
+const statusRe = /\/.+\/status\/(\d+)/;
+const urlRe = /twitter\.com\/.+\/status\/(\d+)/;
+
+export function sanitize(input: string) {
+  const s = input.trim();
+
+  if (simpleRe.test(s)) { return s; }
+
+  try {
+    const url = new URL(s);
+    if (!url.host.endsWith('twitter.com')) {
+      return undefined;
+    }
+
+    const m = statusRe.exec(url.pathname);
+    if (m) { return m[1]; }
+    return undefined;
+
+  } catch (err) {
+    // http, https 안붙은 URL은 url 처리 실패
+  }
+
+  const m = urlRe.exec(s);
+  if (m) { return m[1]; }
+
+  return undefined;
+}

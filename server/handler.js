@@ -150,10 +150,11 @@ module.exports.show = async (event, context, callback) => {
 
   } catch (err) {
     const statusCode = errorToStatusCode(err);
+    const error = Array.isArray(err) ? err[0] : err;
     const response = {
       statusCode,
       headers,
-      body: JSON.stringify(err),
+      body: JSON.stringify(error),
     };
     callback(null, response);
   }

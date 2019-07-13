@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { RouteComponentProps } from 'react-router';
+import { SearchForm } from '.';
 import { Tweet } from './Tweet';
 import {
   TWITTER_SECRET_KEY,
@@ -10,7 +11,7 @@ interface Props extends RouteComponentProps<{ id: string }> {
 }
 
 export const TweetView: React.FC<Props> = (props: Props) => {
-  const id = props.match.params.id;
+  const initialId = props.match.params.id;
   const accessToken = localStorage.getItem(TWITTER_ACCESS_TOKEN_KEY);
   const secretToken = localStorage.getItem(TWITTER_SECRET_KEY);
 
@@ -18,10 +19,16 @@ export const TweetView: React.FC<Props> = (props: Props) => {
   if (!secretToken) { return <div>secret token not found</div>; }
 
   return (
-    <Tweet
-      id={id}
-      accessToken={accessToken}
-      accessTokenSecret={secretToken}
-    />
+    <>
+      <SearchForm
+        initialId={initialId}
+        history={props.history}
+      />
+      <Tweet
+        id={initialId}
+        accessToken={accessToken}
+        accessTokenSecret={secretToken}
+      />
+    </>
   );
 }
