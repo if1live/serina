@@ -1,7 +1,7 @@
 {
   "name": "client",
   "version": "0.1.0",
-  "homepage" : "http://libsora.so/serina",
+  "homepage": "http://libsora.so/serina",
   "dependencies": {
     "@types/jest": "^24.0.15",
     "@types/node": "12.6.2",
@@ -17,6 +17,7 @@
     "react-router-dom": "^5.0.1",
     "react-scripts": "3.0.1",
     "react-tweet-embed": "^1.2.2",
+    "rimraf": "^2.6.3",
     "semantic-ui-css": "^2.4.1",
     "semantic-ui-react": "^0.87.3",
     "typescript": "3.5.3"
@@ -25,7 +26,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "publish": "npm run build && rimraf ../docs && mv build ../docs"
   },
   "eslintConfig": {
     "extends": "react-app"

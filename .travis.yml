@@ -6,4 +6,5 @@ node_js:
 sudo: false
 
 script:
-  - bash ./script/client.sh
+  - bash ./scripts/client.sh
+  - bash ./scripts/server.sh
